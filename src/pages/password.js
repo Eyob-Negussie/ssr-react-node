@@ -10,6 +10,7 @@ class Password extends Component {
   handlePrevious() {
     this.props.history.push("/profile");
   }
+
   render() {
     return (
       <div style={{ display: "inline" }}>
@@ -24,7 +25,7 @@ class Password extends Component {
             className="container"
             style={{
               backgroundColor: "white",
-              height: "20rem",
+              height: "16rem",
               borderRadius: "4px",
               boxShadow: "3px 3px 5px 5px #ECECE8"
             }}

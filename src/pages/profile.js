@@ -1,12 +1,41 @@
 import React, { Component, Fragment } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
-// import '../styles/Profile.css';
-// import { disconnect } from "cluster";
 
 class Profile extends Component {
-  handleClick() {
-    this.props.history.push("/password");
+  componentDidMount() {
+    this.setState({
+      data: { firstName: "", lastName: "", phoneNumber: "", email: "" }
+    });
   }
+
+  handleClick() {
+    console.log(
+      "TCL: Profile -> handleClick -> this.state.data",
+      this.state.data
+    );
+
+    fetch("http://localhost:3000/profile", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(this.state.data)
+    })
+      .then(function(response) {
+        console.log("TCL: Profile -> handleClick -> response", response);
+        return response.json();
+      })
+      .catch(function(err) {
+        console.log("TCL: Profile -> handleClick -> err", err);
+      });
+    // this.props.history.push("/password");
+  }
+
+  handleChange = ({ currentTarget: input }) => {
+    const data = { ...this.state.data };
+    data[input.name] = input.value;
+    this.setState({ data });
+  };
 
   render() {
     return (
@@ -39,11 +68,11 @@ class Profile extends Component {
                 <div class="form-group">
                   <label for="exampleInputEmail1">First Name</label>
                   <input
-                    type="email"
+                    name="firstName"
                     className="form-control"
                     style={{ height: "3rem" }}
                     id="exampleInputEmail1"
-                    aria-describedby="emailHelp"
+                    onChange={this.handleChange}
                   ></input>
                   {/* <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> */}
                 </div>
@@ -52,11 +81,11 @@ class Profile extends Component {
                 <div class="form-group">
                   <label for="exampleInputEmail1">Last Name</label>
                   <input
-                    type="email"
+                    name="lastName"
                     className="form-control x-input"
                     style={{ height: "3rem" }}
                     id="exampleInputEmail1"
-                    aria-describedby="emailHelp"
+                    onChange={this.handleChange}
                   ></input>
                   {/* <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> */}
                 </div>
@@ -68,11 +97,12 @@ class Profile extends Component {
                 <div class="form-group">
                   <label for="exampleInputEmail1">Mobile Phone Number</label>
                   <input
+                    name="phoneNumber"
                     type="email"
                     className="form-control x-input"
                     style={{ height: "3rem" }}
                     id="exampleInputEmail1"
-                    aria-describedby="emailHelp"
+                    onChange={this.handleChange}
                   ></input>
                   {/* <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> */}
                 </div>
@@ -81,11 +111,11 @@ class Profile extends Component {
                 <div class="form-group">
                   <label for="exampleInputEmail1">Email address</label>
                   <input
-                    type="email"
+                    name="email"
                     className="form-control x-input"
                     style={{ height: "3rem" }}
                     id="exampleInputEmail1"
-                    aria-describedby="emailHelp"
+                    onChange={this.handleChange}
                   ></input>
                   {/* <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> */}
                 </div>
