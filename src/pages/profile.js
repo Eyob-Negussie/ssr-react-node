@@ -1,19 +1,25 @@
 import React, { Component, Fragment } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
+import {validate} from '../helper/profileHelper';
 
 class Profile extends Component {
+
   componentDidMount() {
     this.setState({
-      data: { firstName: "", lastName: "", phoneNumber: "", email: "" }
+      data: { firstName: "", lastName: "", phoneNumber: "", email: "" },
+      error: {}
     });
   }
 
   handleClick() {
-    console.log(
-      "TCL: Profile -> handleClick -> this.state.data",
-      this.state.data
-    );
-
+    const {data}  = this.state
+    const error = validate(data);
+    const missingValue = Object.values(error).every((key) => key);
+    if(missingValue){
+      this.setState({error});
+      return;
+    }
+    
     fetch("http://localhost:3000/profile", {
       method: "POST",
       headers: {
@@ -21,14 +27,13 @@ class Profile extends Component {
       },
       body: JSON.stringify(this.state.data)
     })
-      .then(function(response) {
-        console.log("TCL: Profile -> handleClick -> response", response);
-        return response.json();
+      .then((response) => {
+        this.props.history.push("/password");
       })
-      .catch(function(err) {
+      .catch((err) => {
         console.log("TCL: Profile -> handleClick -> err", err);
       });
-    // this.props.history.push("/password");
+    
   }
 
   handleChange = ({ currentTarget: input }) => {
@@ -38,6 +43,12 @@ class Profile extends Component {
   };
 
   render() {
+
+    let error = {};
+    if(this.state){
+       error = this.state.error;
+    }
+
     return (
       <div style={{ display: "inline" }}>
         <div style={{ marginTop: "60px" }} className="container">
@@ -51,7 +62,7 @@ class Profile extends Component {
             className="container"
             style={{
               backgroundColor: "white",
-              height: "18rem",
+              height: "19rem",
               borderRadius: "4px",
               boxShadow: "3px 3px 5px 5px #ECECE8"
             }}
@@ -74,7 +85,7 @@ class Profile extends Component {
                     id="exampleInputEmail1"
                     onChange={this.handleChange}
                   ></input>
-                  {/* <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> */}
+                  {error.firstName && <small id="firstNameHelp" class="form-text text-danger">First name is required.</small> }
                 </div>
               </div>
               <div className="col-6">
@@ -87,7 +98,7 @@ class Profile extends Component {
                     id="exampleInputEmail1"
                     onChange={this.handleChange}
                   ></input>
-                  {/* <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> */}
+                  {error.lastName && <small id="lastNameHelp" class="form-text text-danger">Last name is required.</small> }
                 </div>
               </div>
             </div>
@@ -98,13 +109,14 @@ class Profile extends Component {
                   <label for="exampleInputEmail1">Mobile Phone Number</label>
                   <input
                     name="phoneNumber"
-                    type="email"
+                    type="number"
                     className="form-control x-input"
                     style={{ height: "3rem" }}
                     id="exampleInputEmail1"
+                    max="9999999999"
                     onChange={this.handleChange}
                   ></input>
-                  {/* <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> */}
+                  {error.phoneNumber && <small id="phoneNumberHelp" class="form-text text-danger">Phone number is required.</small> }
                 </div>
               </div>
               <div className="col-6">
@@ -117,7 +129,7 @@ class Profile extends Component {
                     id="exampleInputEmail1"
                     onChange={this.handleChange}
                   ></input>
-                  {/* <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> */}
+                  {error.email && <small id="email" class="form-text text-danger">Email is required.</small> }
                 </div>
               </div>
             </div>

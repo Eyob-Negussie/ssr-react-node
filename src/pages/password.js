@@ -1,17 +1,57 @@
 import React, { Component } from "react";
-// import '../styles/Profile.css';
-// import { disconnect } from "cluster";
+import {validate} from '../helper/passwordHelper';
 
 class Password extends Component {
+
+  componentDidMount() {
+    this.setState({
+      data: { password: "", passwordConfirmation: ""},
+      error: {}
+    });
+  }
+
   handleClick() {
-    this.props.history.push("/password");
+    const error = validate(this.state.data);
+    const missingValue = Object.values(error).every((key) => key === false);
+
+    if(missingValue){
+      this.setState({error});
+      return;
+    }
+    
+    fetch("http://localhost:3000/password", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(this.state.data)
+    })
+    .then((response) => {
+      // this.props.history.push("/password");
+    })
+    .catch((err) => {
+      console.log("TCL: Profile -> handleClick -> err", err);
+    });
   }
 
   handlePrevious() {
     this.props.history.push("/profile");
   }
 
+  handleChange = ({ currentTarget: input }) => {
+    const data = { ...this.state.data };
+    data[input.name] = input.value;
+    const error = validate(data);
+    this.setState({ data, error });
+  };
+
   render() {
+
+    let error = {};
+    if(this.state){
+      error = this.state.error;
+    }
+
     return (
       <div style={{ display: "inline" }}>
         <div className="container" style={{ marginTop: "60px" }}>
@@ -51,36 +91,38 @@ class Password extends Component {
             <div className="row">
               <div className="col-6">
                 <div class="form-group">
-                  <label for="exampleInputEmail1">First Name</label>
+                  <label for="exampleInputEmail1">Create Password</label>
                   <input
-                    type="email"
+                    type="password"
+                    name="password"
                     className="form-control"
                     style={{ height: "3rem" }}
                     id="exampleInputEmail1"
-                    aria-describedby="emailHelp"
+                    onChange={this.handleChange}
                   ></input>
-                  <small class="form-text text-muted">
+                  <small className={`form-text ${error.atLeastEightChar ? "text-success" : "text-danger"}`}>
                     At least 8 characters
                   </small>
-                  <small class="form-text text-muted">
+                  <small className={`form-text ${error.atLeastOneNumber ? "text-success" : "text-danger"}`}>
                     At least one number
                   </small>
-                  <small class="form-text text-muted">
+                  <small className={`form-text ${error.atLeastOneCapital ? "text-success" : "text-danger"}`}>
                     At least one capital letter
                   </small>
                 </div>
               </div>
               <div className="col-6">
                 <div class="form-group">
-                  <label for="exampleInputEmail1">Last Name</label>
+                  <label for="exampleInputEmail1">Confirm Password</label>
                   <input
-                    type="email"
+                    type="password"
+                    name="passwordConfirmation"
                     className="form-control"
                     style={{ height: "3rem" }}
                     id="exampleInputEmail1"
-                    aria-describedby="emailHelp"
+                    onChange={this.handleChange}
                   ></input>
-                  {/* <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> */}
+                  {!error.passwordMatch && <small id="emailHelp" class="form-text text-danger">Your Password does not match please check again.</small>}
                 </div>
               </div>
             </div>
