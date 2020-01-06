@@ -18,8 +18,10 @@ class Password extends Component {
       this.setState({error});
       return;
     }
+
+    const apiUrl = window.location.origin;
     
-    fetch("http://localhost:3000/password", {
+    fetch(`${apiUrl}/password`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

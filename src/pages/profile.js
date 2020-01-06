@@ -19,8 +19,10 @@ class Profile extends Component {
       this.setState({error});
       return;
     }
+
+    const apiUrl = window.location.origin;
     
-    fetch("http://localhost:3000/profile", {
+    fetch(`${apiUrl}/profile`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
