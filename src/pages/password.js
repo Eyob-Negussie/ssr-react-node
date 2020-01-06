@@ -29,7 +29,7 @@ class Password extends Component {
       body: JSON.stringify(this.state.data)
     })
     .then((response) => {
-      // this.props.history.push("/password");
+      this.props.history.push("/billing");
     })
     .catch((err) => {
       console.log("TCL: Profile -> handleClick -> err", err);

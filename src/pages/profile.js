@@ -14,7 +14,8 @@ class Profile extends Component {
   handleClick() {
     const {data}  = this.state
     const error = validate(data);
-    const missingValue = Object.values(error).every((key) => key);
+    const missingValue = !Object.values(error).every((value) => !value);
+
     if(missingValue){
       this.setState({error});
       return;

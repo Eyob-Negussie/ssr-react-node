@@ -4,6 +4,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import Header from "./pages/header";
 import Profile from "./pages/profile";
 import Password from "./pages/password";
+import Billing from "./pages/billing";
 
 class App extends Component {
   render() {
@@ -13,6 +14,7 @@ class App extends Component {
         <Switch>
           <Route path="/profile" render={props => <Profile {...props} />} />
           <Route path="/password" render={props => <Password {...props} />} />
+          <Route path="/billing" render={props => <Billing {...props} />} />
         </Switch>
       </Fragment>
     );
